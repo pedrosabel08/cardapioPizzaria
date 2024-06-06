@@ -34,91 +34,95 @@ include ("conexao.php");
         </div>
     </header>
     <div>
-        <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
-            Tamanho Pizza
-        </h2>
-        <div class="pizzas-container">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mx-auto my-auto px-2 mb-16">
-                <?php
-                $pizzaItems = array(
-                    array("PIZZA BABY", "./assets/pizzaBaby.jpg", "20cm, 4 fatias, 1 sabor", "29.90"),
-                    array("PIZZA MÉDIA", "./assets/pizzaMedia.jpg", "30cm, 8 fatias, 2 sabores", "58.90"),
-                    array("PIZZA GRANDE", "./assets/pizzaGrande.jpg", "35cm, 12 fatias, 3 sabores", "76.90"),
-                    array("PIZZA GIGANTE", "./assets/pizzaGigante.jpg", "45cm, 16 fatias, 4 sabores", "87.90")
-                );
-
-                foreach ($pizzaItems as $item) {
-                    ?>
-                    <div class="pizzas-container__item bg-white rounded-lg shadow-md flex p-6 hover:shadow-lg cursor-pointer"
-                        data-title="<?php echo $item[0]; ?>"
-                        onclick="selectPizzaSize('<?php echo $item[0]; ?>', '<?php echo $item[1]; ?>', <?php echo $item[3]; ?>)">
-                        <img src="<?php echo $item[1]; ?>" alt="<?php echo $item[0]; ?>"
-                            class="w-24 h-24 object-cover rounded-full mr-6">
-                        <div class="description">
-                            <h2 class="font-bold text-xl"><?php echo $item[0]; ?></h2>
-                            <p><?php echo $item[2]; ?></p>
-                            <p class="font-medium text-red-600">R$ <?php echo $item[3]; ?></p>
-                        </div>
-                    </div>
+        <div id="menu">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
+                Tamanho Pizza
+            </h2>
+            <div class="pizzas-container">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mx-auto my-auto px-2 mb-16">
                     <?php
-                }
-                ?>
+                    $pizzaItems = array(
+                        array("PIZZA BABY", "./assets/pizzaBaby.jpg", "20cm, 4 fatias, 1 sabor", "29.90"),
+                        array("PIZZA MÉDIA", "./assets/pizzaMedia.jpg", "30cm, 8 fatias, 2 sabores", "58.90"),
+                        array("PIZZA GRANDE", "./assets/pizzaGrande.jpg", "35cm, 12 fatias, 3 sabores", "76.90"),
+                        array("PIZZA GIGANTE", "./assets/pizzaGigante.jpg", "45cm, 16 fatias, 4 sabores", "87.90")
+                    );
+
+                    foreach ($pizzaItems as $item) {
+                        ?>
+                        <div class="pizzas-container__item bg-white rounded-lg shadow-md flex p-6 hover:shadow-lg cursor-pointer"
+                            data-title="<?php echo $item[0]; ?>"
+                            onclick="selectPizzaSize('<?php echo $item[0]; ?>', '<?php echo $item[1]; ?>', <?php echo $item[3]; ?>)">
+                            <img src="<?php echo $item[1]; ?>" alt="<?php echo $item[0]; ?>"
+                                class="w-24 h-24 object-cover rounded-full mr-6">
+                            <div class="description">
+                                <h2 class="font-bold text-xl"><?php echo $item[0]; ?></h2>
+                                <p><?php echo $item[2]; ?></p>
+                                <p class="font-medium text-red-600">R$ <?php echo $item[3]; ?></p>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
             </div>
-        </div>
-    </div>
-    <div id="menu">
-        <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
-            Cardapio
-        </h2>
-        <main class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-10 mx-auto my-auto px-2 mb-16">
-            <?php
-            $sql = "SELECT p.idpizzas, p.nomePizza, GROUP_CONCAT(pr.nomeProduto SEPARATOR ', ') AS ingredientes
+
+            <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
+                Cardápio
+            </h2>
+            <main class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-10 mx-auto my-auto px-2 mb-16">
+                <?php
+                $sql = "SELECT p.idpizzas, p.nomePizza, GROUP_CONCAT(pr.nomeProduto SEPARATOR ', ') AS ingredientes
             FROM pizzas p
             JOIN pizzas_produtos pp ON p.idpizzas = pp.pizza_id
             JOIN produtos pr ON pp.produto_id = pr.idprodutos
             GROUP BY p.idpizzas";
-            $result = mysqli_query($conn, $sql);
+                $result = mysqli_query($conn, $sql);
 
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    ?>
-                    <div class="pizza-item rounded-lg shadow-md p-6">
-                        <h3 class="text-xl font-bold"><?php echo $row['nomePizza']; ?></h3>
-                        <p class="text-gray-700">Ingredientes: <?php echo $row['ingredientes']; ?></p>
-                        <button class="bg-gray-900 px-5 rounded add-to-cart-btn" data-name="<?php echo $row['nomePizza']; ?>"
-                            onclick="selectFlavor('<?php echo $row['nomePizza']; ?>')">
-                            <i class="fa fa-cart-plus text-lg text-white"></i>
-                        </button>
-                    </div>
-                    <?php
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                        <div class="pizza-item rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-bold"><?php echo $row['nomePizza']; ?></h3>
+                            <p class="text-gray-700">Ingredientes: <?php echo $row['ingredientes']; ?></p>
+                            <button class="bg-gray-900 px-5 rounded add-to-cart-btn"
+                                data-name="<?php echo $row['nomePizza']; ?>" 
+                                data-size="<?php echo $item[0]; ?>"
+                                data-price="<?php echo $item[3]; ?>" 
+                                onclick="selectFlavor('<?php echo $row['nomePizza']; ?>')">
+                                <i class="fa fa-cart-plus text-lg text-white"></i>
+                            </button>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo "Nenhuma pizza encontrada.";
                 }
-            } else {
-                echo "Nenhuma pizza encontrada.";
-            }
-            ?>
-        </main>
-    </div>
+                ?>
+            </main>
+        </div>
+        <footer class="w-full bg-red-500 py-3 fixed bottom-0 z-40 flex items-center justify-center">
+            <button class="flex items-center gap-2 text-white font-bold" id="cart-btn">
+                (<span id="cart-count">0</span>)
+                Veja meu carrinho
+                <i class="fa fa-cart-plus text-lg text-white"></i>
+            </button>
+        </footer>
 
-    <footer class="w-full bg-red-500 py-3 fixed bottom-0 z-40 flex items-center justify-center">
-        <button class="flex items-center gap-2 text-white font-bold" id="cart-btn">
-            (<span id="cart-count">0</span>)
-            Veja meu carrinho
-            <i class="fa fa-cart-plus text-lg text-white"></i>
-        </button>
-    </footer>
-
-    <div id="cart-modal" class="bg-black/50 w-full h-full fixed top-0 left-0 z-[99] items-center justify-center hidden">
-        <div class="bg-white p-5 rounded-md min-w-[90%] md:min-w-[600px]">
-            <h2 class="text-center font-bold text-2xl mb-2">Meu carrinho</h2>
-            <div id="cart-items" class="flex justify-between mb-2 flex-col"></div>
-            <p class="font-bold">Total: R$ <span id="cart-total">0.00</span></p>
-            <div class="flex items-center justify-between mt-5 w-full">
-                <button id="close-modal-btn">Fechar</button>
-                <button id="checkout-btn" class="bg-green-500 text-white px-4 py-1 rounded">Finalizar Pedido</button>
+        <div id="cart-modal"
+            class="bg-black/50 w-full h-full fixed top-0 left-0 z-[99] items-center justify-center hidden">
+            <div class="bg-white p-5 rounded-md min-w-[90%] md:min-w-[600px]">
+                <h2 class="text-center font-bold text-2xl mb-2">Meu carrinho</h2>
+                <div id="cart-items" class="flex justify-between mb-2 flex-col"></div>
+                <p class="font-bold">Total: R$ <span id="cart-total">0.00</span></p>
+                <div class="flex items-center justify-between mt-5 w-full">
+                    <button id="close-modal-btn">Fechar</button>
+                    <button id="checkout-btn" class="bg-green-500 text-white px-4 py-1 rounded">Finalizar
+                        Pedido</button>
+                </div>
             </div>
         </div>
-    </div>
-    <script src="script.js"></script>
+        <script src="script.js"></script>
 </body>
 
 </html>
