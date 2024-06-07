@@ -51,8 +51,8 @@ include ("conexao.php");
                     foreach ($pizzaItems as $item) {
                         ?>
                         <div class="pizzas-container__item bg-white rounded-lg shadow-md flex p-6 hover:shadow-lg cursor-pointer"
-                            data-title="<?php echo $item[0]; ?>"
-                            onclick="selectPizzaSize('<?php echo $item[0]; ?>', '<?php echo $item[1]; ?>', <?php echo $item[3]; ?>)">
+                            data-size="<?php echo $item[0]; ?>" data-price="<?php echo $item[3]; ?>"
+                            onclick="selectPizzaSize('<?php echo $item[0]; ?>', '<?php echo $item[3]; ?>')">
                             <img src="<?php echo $item[1]; ?>" alt="<?php echo $item[0]; ?>"
                                 class="w-24 h-24 object-cover rounded-full mr-6">
                             <div class="description">
@@ -77,29 +77,17 @@ include ("conexao.php");
             </button>
         </footer>
 
-        <div id="cart-modal"
-            class="bg-black/50 w-full h-full fixed top-0 left-0 z-[99] items-center justify-center hidden">
-            <div class="bg-white p-5 rounded-md min-w-[90%] md:min-w-[600px]">
-                <h2 class="text-center font-bold text-2xl mb-2">Meu carrinho</h2>
-                <div id="cart-items" class="flex justify-between mb-2 flex-col"></div>
-                <p class="font-bold">Total: R$ <span id="cart-total">0.00</span></p>
-                <div class="flex items-center justify-between mt-5 w-full">
-                    <button id="close-modal-btn">Fechar</button>
-                    <button id="checkout-btn" class="bg-green-500 text-white px-4 py-1 rounded">Finalizar
-                        Pedido</button>
-                </div>
-            </div>
-            <div class="bg-white p-5 rounded-md w-full md:w-[400px] h-full overflow-y-auto">
-                <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
-                    Cardápio
-                </h2>
-                <main class="grid grid-cols-1 gap-7 md:gap-10 mx-auto my-auto px-2 mb-16">
+        <div class="hidden flex-col items-center justify-center w-full h-full bg-black/50 fixed top-0 left-0 z-[99] "
+            id="cart-modal">
+            <div class="bg-white p-5 rounded-md w-[900px] md:w-[600px] h-full overflow-y-auto" id="flavors-items">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">Cardápio</h2>
+                <main class="grid grid-cols-1: md:grid-cols-3 gap-7 md:gap-10 mx-auto max-w-7xl px-2 mb-16">
                     <?php
                     $sql = "SELECT p.idpizzas, p.nomePizza, GROUP_CONCAT(pr.nomeProduto SEPARATOR ', ') AS ingredientes
-            FROM pizzas p
-            JOIN pizzas_produtos pp ON p.idpizzas = pp.pizza_id
-            JOIN produtos pr ON pp.produto_id = pr.idprodutos
-            GROUP BY p.idpizzas";
+                    FROM pizzas p
+                    JOIN pizzas_produtos pp ON p.idpizzas = pp.pizza_id
+                    JOIN produtos pr ON pp.produto_id = pr.idprodutos
+                    GROUP BY p.idpizzas";
                     $result = mysqli_query($conn, $sql);
 
                     if (mysqli_num_rows($result) > 0) {
@@ -109,7 +97,7 @@ include ("conexao.php");
                                 <h3 class="text-xl font-bold"><?php echo $row['nomePizza']; ?></h3>
                                 <p class="text-gray-700">Ingredientes: <?php echo $row['ingredientes']; ?></p>
                                 <button class="bg-gray-900 px-5 rounded add-to-cart-btn"
-                                    data-name="<?php echo $row['nomePizza']; ?>" data-price="<?php echo $row['preco']; ?>">
+                                    data-name="<?php echo $row['nomePizza']; ?>">
                                     <i class="fa fa-cart-plus text-lg text-white"></i>
                                 </button>
                             </div>
@@ -120,6 +108,16 @@ include ("conexao.php");
                     }
                     ?>
                 </main>
+            </div>
+            <div class="bg-white p-5 rounded-md w-full md:w-[600px] mt-4">
+                <h2 class="text-center font-bold text-2xl mb-2">Meu carrinho</h2>
+                <div id="cart-items" class="flex justify-between mb-2 flex-col"></div>
+                <p class="font-bold">Total: R$ <span id="cart-total">0.00</span></p>
+                <div class="flex items-center justify-between mt-5 w-full">
+                    <button id="close-modal-btn" class="bg-red-500 text-white px-4 py-1 rounded">Fechar</button>
+                    <button id="checkout-btn" class="bg-green-500 text-white px-4 py-1 rounded">Finalizar
+                        Pedido</button>
+                </div>
             </div>
         </div>
         <script src="script.js"></script>
