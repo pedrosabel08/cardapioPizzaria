@@ -67,39 +67,7 @@ include ("conexao.php");
                 </div>
             </div>
 
-            <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
-                Cardápio
-            </h2>
-            <main class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-10 mx-auto my-auto px-2 mb-16">
-                <?php
-                $sql = "SELECT p.idpizzas, p.nomePizza, GROUP_CONCAT(pr.nomeProduto SEPARATOR ', ') AS ingredientes
-            FROM pizzas p
-            JOIN pizzas_produtos pp ON p.idpizzas = pp.pizza_id
-            JOIN produtos pr ON pp.produto_id = pr.idprodutos
-            GROUP BY p.idpizzas";
-                $result = mysqli_query($conn, $sql);
 
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        ?>
-                        <div class="pizza-item rounded-lg shadow-md p-6">
-                            <h3 class="text-xl font-bold"><?php echo $row['nomePizza']; ?></h3>
-                            <p class="text-gray-700">Ingredientes: <?php echo $row['ingredientes']; ?></p>
-                            <button class="bg-gray-900 px-5 rounded add-to-cart-btn"
-                                data-name="<?php echo $row['nomePizza']; ?>" 
-                                data-size="<?php echo $item[0]; ?>"
-                                data-price="<?php echo $item[3]; ?>" 
-                                onclick="selectFlavor('<?php echo $row['nomePizza']; ?>')">
-                                <i class="fa fa-cart-plus text-lg text-white"></i>
-                            </button>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo "Nenhuma pizza encontrada.";
-                }
-                ?>
-            </main>
         </div>
         <footer class="w-full bg-red-500 py-3 fixed bottom-0 z-40 flex items-center justify-center">
             <button class="flex items-center gap-2 text-white font-bold" id="cart-btn">
@@ -120,6 +88,38 @@ include ("conexao.php");
                     <button id="checkout-btn" class="bg-green-500 text-white px-4 py-1 rounded">Finalizar
                         Pedido</button>
                 </div>
+            </div>
+            <div class="bg-white p-5 rounded-md w-full md:w-[400px] h-full overflow-y-auto">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
+                    Cardápio
+                </h2>
+                <main class="grid grid-cols-1 gap-7 md:gap-10 mx-auto my-auto px-2 mb-16">
+                    <?php
+                    $sql = "SELECT p.idpizzas, p.nomePizza, GROUP_CONCAT(pr.nomeProduto SEPARATOR ', ') AS ingredientes
+            FROM pizzas p
+            JOIN pizzas_produtos pp ON p.idpizzas = pp.pizza_id
+            JOIN produtos pr ON pp.produto_id = pr.idprodutos
+            GROUP BY p.idpizzas";
+                    $result = mysqli_query($conn, $sql);
+
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            ?>
+                            <div class="pizza-item rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-bold"><?php echo $row['nomePizza']; ?></h3>
+                                <p class="text-gray-700">Ingredientes: <?php echo $row['ingredientes']; ?></p>
+                                <button class="bg-gray-900 px-5 rounded add-to-cart-btn"
+                                    data-name="<?php echo $row['nomePizza']; ?>" data-price="<?php echo $row['preco']; ?>">
+                                    <i class="fa fa-cart-plus text-lg text-white"></i>
+                                </button>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo "Nenhuma pizza encontrada.";
+                    }
+                    ?>
+                </main>
             </div>
         </div>
         <script src="script.js"></script>

@@ -88,4 +88,19 @@ body {
     flex: 1;
 }
 
+.custom-modal-content {
+    max-width: 90%;
+    min-width: 600px;
+}
+
+.custom-menu {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
 
